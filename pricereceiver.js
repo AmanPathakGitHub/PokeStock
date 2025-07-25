@@ -6,7 +6,9 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
-let SetURLS = {};
+
+// {name: "pokemon-journey-together", url: "https://www.pokellector.com/sets/pokemon-journey-together", logo-image: "https://www.pokellector.com/sets/pokemon-journey-together/logo.png", images: ["https://www.pokellector.com/sets/pokemon-journey-together/1.jpg", "https://www.pokellector.com/sets/pokemon-journey-together/2.jpg"]}
+let SetURLS = [];
 
 async function getPrice(pokemonSet, pokemonName) {
     const pricechartingPrice = getPriceChartingPrice(pokemonSet, pokemonName); 
@@ -78,14 +80,16 @@ async function PopulateSetURLS() {
     await page.goto(url, { waitUntil: ['networkidle0', 'load', 'domcontentloaded'], timeout: 0 });
     await page.waitForSelector(setTableSelector);
     const urls = await page.$eval(setTableSelector, (el) => {    
-        const urls = {};
+        const urls = [];
         const sections = el.querySelectorAll('div');
         sections.forEach(section => {
         const sectionLinks = section.querySelectorAll('a');
          sectionLinks.forEach(link => {
-            const setName = link.title.toLowerCase();
+            
+            const logo = link.querySelector("img").src;
+            const setName = link.querySelector("span").textContent.toLowerCase();
             const setURL = link.href;
-            urls[setName] = setURL;
+            urls.push({ name: setName, url: setURL, logoImage: logo });
          });
         });
         return urls;
@@ -93,8 +97,6 @@ async function PopulateSetURLS() {
 
     await browser.close();
 
-
-    SetURLS = urls;
 
     return urls;
 

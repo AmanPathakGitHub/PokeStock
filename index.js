@@ -10,6 +10,8 @@ const pokemonName = 'n%27s-zekrom';
 
 let SetURLS = {};
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
     const price = priceReceiver.getPrice(pokemonSet, pokemonName);
     
@@ -23,18 +25,15 @@ app.get('/', (req, res) => {
 
 app.get('/images', (req, res) => {
 
-    let msg = "";
-    // priceReceiver.SetURLS.map((value, key) => {
-    //     msg += `${key}: ${value}\n`;
-    // });
+    // let msg = "";
 
-    for (const [key, value] of Object.entries(SetURLS)) {
-        msg += `${key}: ${value} </br>`;
-    }
+    // for (const [key, value] of Object.entries(SetURLS)) {
+    //     msg += `${key}: ${value}`;
+    // }
 
-    console.log(msg);
+    // console.log(msg);
 
-    res.send(msg);
+    res.send(SetURLS);
 
 });
 
@@ -45,8 +44,9 @@ app.get('/give/:SetName', (req, res) => {
 
     imageLinks.then(images => {
         let msg = "";
-        for (const image of images) {
-            msg += `<img src="${image}" alt="Pokemon Image" /> </br>`;
+        for (let i = 0; i < images.length; i++) {
+            //msg += `<img src="${image}" alt="Pokemon Image" /> </br>`;
+            msg += (i == 0 ? "" : " ") + images[i];
         }
         res.send(msg);
     }).catch(err => {
