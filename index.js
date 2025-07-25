@@ -7,8 +7,8 @@ const cors = require('cors'); // Import CORS middleware
 const app = express();
 const port = 3000;
 
-const pokemonSet = 'pokemon-journey-together';
-const pokemonName = 'n%27s-reshiram-167';
+// const pokemonSet = 'pokemon-journey-together';
+// const pokemonName = 'n%27s-reshiram-167';
 
 let SetURLS = {};
 const imageCache = {}; // In-memory cache for image links
@@ -17,15 +17,24 @@ app.use(express.json());
 app.use(cors()); // Enable CORS for all routes
 
 app.get('/', (req, res) => {
+    console.log("Server root accessed");
+    res.send("Welcome to the PokeStock API! Use /cardPrice?pokemonSet=<set>&pokemonName=<name> to get card prices.");
+});
+
+app.get('/cardPrice', (req, res) => {
+    const { pokemonSet, pokemonName } = req.query; // Extract query parameters
+    console.log(`Fetching price for set: ${pokemonSet}, card: ${pokemonName}`);
+
     const price = priceReceiver.getPrice(pokemonSet, pokemonName);
 
     price.then(price => {
-        res.send("The price is: $" + price);
+        res.send(price);
     }).catch(err => {
         console.error('Error fetching price:', err);
-        res.send("Error fetching price");
+        res.status(500).send("Error fetching price");
     });
 });
+
 
 app.get('/images', (req, res) => {
 
@@ -44,10 +53,10 @@ app.get('/images', (req, res) => {
 app.get('/give/:SetName', (req, res) => {
     const name = req.params.SetName.replace(/-/g, ' ').toLowerCase();
 
-    // Check if the images for the set are already cached
+    // Check if the card details for the set are already cached
     if (imageCache[name]) {
-        console.log(`Using cached images for set: ${name}`);
-        res.send(imageCache[name].join(' ')); // Return cached images
+        console.log(`Using cached card details for set: ${name}`);
+        res.json(imageCache[name]); // Return cached card details
         return;
     }
 
@@ -58,22 +67,32 @@ app.get('/give/:SetName', (req, res) => {
     }
 
     const url = SetURLS[name].url;
-    const imageLinks = priceReceiver.getPokemonImages(url);
-    console.log("Fetching images for set: " + name + " from URL: " + url);
+    const cardDetailsPromise = priceReceiver.getPokemonImages(url);
+    console.log("Fetching card details for set: " + name + " from URL: " + url);
 
-    imageLinks.then(images => {
-        imageCache[name] = images; // Cache the fetched images
-        let msg = images.join(' '); // Concatenate image URLs into a single string
-        res.send(msg);
+    cardDetailsPromise.then(cardDetails => {
+        imageCache[name] = cardDetails; // Cache the fetched card details
+        res.json(cardDetails); // Return the card details as JSON
     }).catch(err => {
-        console.error('Error fetching images:', err);
-        res.status(500).send("Error fetching images");
+        console.error('Error fetching card details:', err);
+        res.status(500).send("Error fetching card details");
     });
 });
 
 app.get('/seturls', async (req, res) => {
     SetURLS = await priceReceiver.PopulateSetURLS()
     console.log("loaded SetURLS: ", SetURLS);
+});
+
+app.get('/card/:CardId', (req, res) => {
+    const cardId = req.params.CardId;
+    console.log(`Fetching details for card: ${cardId}`);
+    // Mock data for demonstration purposes
+    const cardDetails = {
+        image: `https://example.com/cards/${cardId}.png`,
+        price: Math.random() * 100, // Random price for demonstration
+    };
+    res.json(cardDetails);
 });
 
 app.listen(port, async () => {

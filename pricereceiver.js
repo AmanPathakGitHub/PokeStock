@@ -10,11 +10,8 @@ let SetURLS = {};
 
 async function getPrice(pokemonSet, pokemonName) {
   const pricechartingPrice = getPriceChartingPrice(pokemonSet, pokemonName);
-
   await pricechartingPrice;
-
-  return [pricechartingPrice];
-
+  return pricechartingPrice;
 }
 
 async function getPriceChartingPrice(pokemonSet, pokemonName) {
@@ -102,7 +99,6 @@ async function PopulateSetURLS() {
 }
 
 async function getPokemonImages(url) {
-    //const url = "https://www.pokellector.com/Black-Bolt-EN-Expansion";
     const cardTableSelector = "#columnLeft > div.content.cardlisting.small";
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -111,20 +107,26 @@ async function getPokemonImages(url) {
 
     await page.waitForSelector(cardTableSelector);
 
-    const imageList = await page.$eval(cardTableSelector, (el) => {
-        const images = [];
+    const cardDetails = await page.$eval(cardTableSelector, (el) => {
         const cards = el.querySelectorAll('.card');
+        const details = [];
+
         cards.forEach(card => {
             const img = card.querySelector('img');
-            if (img) {
+            const plaque = card.querySelector('.plaque');
+            if (img && plaque) {
                 const src = img.src ? img.src : img.getAttribute('data-src');
-                images.push(src);
+                const name = plaque.textContent.split('-')[0].trim(); // Extract name
+                const cardNumber = plaque.textContent.split('-')[1].trim(); // Extract card number
+                details.push({ name, cardNumber, image: src });
             }
         });
-        return images;
+
+        return details;
     });
+
     await browser.close();
-    return imageList;
+    return cardDetails;
 }
 
 
