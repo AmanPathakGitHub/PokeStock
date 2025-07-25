@@ -37,7 +37,6 @@ app.get('/images', (req, res) => {
 
 });
 
-<<<<<<< Updated upstream
 app.get('/give/:SetName', (req, res) => {
     const name = req.params.SetName.replace(/-/g, ' ').toLowerCase();
     const url = SetURLS[name];
@@ -61,7 +60,3 @@ app.listen(port, async () => {
   SetURLS = await priceReceiver.PopulateSetURLS()
   console.log("loaded SetURLS: ", SetURLS);
 });
-=======
-priceReceiver.getPrice(pokemonSet, pokemonName);
-//console.log(`Price: ${price}`);
->>>>>>> Stashed changes

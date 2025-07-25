@@ -47,7 +47,6 @@ async function getPriceChartingPrice(pokemonSet, pokemonName) {
 }
 
 async function getEbayPrice(pokemonSet, pokemonName) {
-<<<<<<< Updated upstream
     const ebaySelector = '.s-item__price';
     //document.querySelector(".s-item.s-item__pl-on-bottom > div > div.s-item__info.clearfix > div.s-item__details.clearfix > div.s-item__details-section--primary > div:nth-child(1) > span")
     //#item24870f84e4 > div > div.s-item__info.clearfix > div.s-item__details.clearfix > div.s-item__details-section--primary > div:nth-child(1) > span
@@ -59,19 +58,6 @@ async function getEbayPrice(pokemonSet, pokemonName) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 0 });
-=======
-  const ebaySelector = '.s-item__price';
-  //document.querySelector(".s-item.s-item__pl-on-bottom > div > div.s-item__info.clearfix > div.s-item__details.clearfix > div.s-item__details-section--primary > div:nth-child(1) > span")
-  //#item24870f84e4 > div > div.s-item__info.clearfix > div.s-item__details.clearfix > div.s-item__details-section--primary > div:nth-child(1) > span
-  pokemonSet = pokemonSet.replace(/-/g, '+');
-  pokemonName = pokemonName.replace(/-/g, '+');
-  const url = `https://www.ebay.com/sch/i.html?_nkw=${pokemonSet}+${pokemonName}&Grade=10`;
-  console.log("Ebay URL: " + url);
-
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto(url);
->>>>>>> Stashed changes
 
   await page.waitForSelector(ebaySelector);
 
@@ -87,7 +73,6 @@ async function getEbayPrice(pokemonSet, pokemonName) {
   return price;
 }
 
-<<<<<<< Updated upstream
 async function PopulateSetURLS() {
     const url = "https://www.pokellector.com/sets";
     const setTableSelector = "#columnLeft";
@@ -146,27 +131,6 @@ async function getPokemonImages(url) {
     return imageList;
 }
 
-=======
-async function fetchEbay(pokemonSet, pokemonName) {
-  pokemonSet = pokemonSet.replace(/-/g, '+');
-  pokemonName = pokemonName.replace(/-/g, '+');
-  const searchUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(pokemonSet)}+${encodeURIComponent(pokemonName)}&_sop=16`; // sort by price descending
-  try {
-    const { data } = await axios.get(searchUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0", // mimic browser
-      },
-    });
-
-    const $ = cheerio.load(data);
-    const firstPrice = $(".s-item__price").first().text().trim();
-
-    console.log(`eBay Highest Price: ${firstPrice}`);
-  } catch (err) {
-    console.error("Error fetching from eBay:", err.message);
-  }
-}
->>>>>>> Stashed changes
 
 exports.getPrice = getPrice;
 exports.getPriceChartingPrice = getPriceChartingPrice;
