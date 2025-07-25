@@ -11,8 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",
+<<<<<<< Updated upstream
     "puppeteer": "^24.14.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"
+=======
+    "puppeteer": "^24.14.0"
+>>>>>>> Stashed changes
   }
 }

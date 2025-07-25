@@ -11,40 +11,43 @@ puppeteer.use(StealthPlugin());
 let SetURLS = [];
 
 async function getPrice(pokemonSet, pokemonName) {
-    const pricechartingPrice = getPriceChartingPrice(pokemonSet, pokemonName); 
-    
+  const pricechartingPrice = getPriceChartingPrice(pokemonSet, pokemonName);
 
-    await pricechartingPrice;
+  await pricechartingPrice;
 
-    return [pricecharthingPrice];
-    
+  return [pricechartingPrice];
+
 }
 
 async function getPriceChartingPrice(pokemonSet, pokemonName) {
-    const psa10selector = '#manual_only_price > span.price.js-price';
+  const psa10selector = '#manual_only_price > span.price.js-price';
+  const ungradedSelector = '#used_price > span.price.js-price';
+  console.log("Fetching price for: " + pokemonSet + " " + pokemonName);
 
-    const url = `https://www.pricecharting.com/game/${pokemonSet}/${pokemonName}`;
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url);
+  const url = `https://www.pricecharting.com/game/${pokemonSet}/${pokemonName}`;
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url);
+  console.log("Navigated to PriceCharting URL: " + url);
 
-    // Wait for the price element to appear
-    await page.waitForSelector(psa10selector);
+  // Wait for the price element to appear
+  await page.waitForSelector(ungradedSelector);
+  console.log("PriceCharting selector found: " + ungradedSelector);
 
-    // Extract the price
-    const price = await page.$eval(psa10selector, el => {
-        const priceText = el.textContent.trim();
-        // Remove the dollar sign and commas, then parse to float
-        return parseFloat(priceText.replace(/[$,]/g, ''));
-    });
+  // Extract the price
+  const price = await page.$eval(ungradedSelector, el => {
+    const priceText = el.textContent.trim();
+    // Remove the dollar sign and commas, then parse to float
+    return parseFloat(priceText.replace(/[$,]/g, ''));
+  });
 
-
-
-    await browser.close();
-    return price;
+  await browser.close();
+  console.log("PriceCharting Price: " + price);
+  return price;
 }
 
 async function getEbayPrice(pokemonSet, pokemonName) {
+<<<<<<< Updated upstream
     const ebaySelector = '.s-item__price';
     //document.querySelector(".s-item.s-item__pl-on-bottom > div > div.s-item__info.clearfix > div.s-item__details.clearfix > div.s-item__details-section--primary > div:nth-child(1) > span")
     //#item24870f84e4 > div > div.s-item__info.clearfix > div.s-item__details.clearfix > div.s-item__details-section--primary > div:nth-child(1) > span
@@ -56,21 +59,35 @@ async function getEbayPrice(pokemonSet, pokemonName) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 0 });
+=======
+  const ebaySelector = '.s-item__price';
+  //document.querySelector(".s-item.s-item__pl-on-bottom > div > div.s-item__info.clearfix > div.s-item__details.clearfix > div.s-item__details-section--primary > div:nth-child(1) > span")
+  //#item24870f84e4 > div > div.s-item__info.clearfix > div.s-item__details.clearfix > div.s-item__details-section--primary > div:nth-child(1) > span
+  pokemonSet = pokemonSet.replace(/-/g, '+');
+  pokemonName = pokemonName.replace(/-/g, '+');
+  const url = `https://www.ebay.com/sch/i.html?_nkw=${pokemonSet}+${pokemonName}&Grade=10`;
+  console.log("Ebay URL: " + url);
 
-    await page.waitForSelector(ebaySelector);
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url);
+>>>>>>> Stashed changes
 
-    // Extract the price
-    const price = await page.$eval(ebaySelector, el => {
-        const priceText = el.textContent.trim();
-        // Remove the dollar sign and commas, then parse to float
-        return priceText;
-    });
-    console.log("Ebay Price: " + price);
-    await browser.close();
+  await page.waitForSelector(ebaySelector);
 
-    return price;
-} 
+  // Extract the price
+  const price = await page.$eval(ebaySelector, el => {
+    const priceText = el.textContent.trim();
+    // Remove the dollar sign and commas, then parse to float
+    return priceText;
+  });
+  console.log("Ebay Price: " + price);
+  await browser.close();
 
+  return price;
+}
+
+<<<<<<< Updated upstream
 async function PopulateSetURLS() {
     const url = "https://www.pokellector.com/sets";
     const setTableSelector = "#columnLeft";
@@ -129,6 +146,27 @@ async function getPokemonImages(url) {
     return imageList;
 }
 
+=======
+async function fetchEbay(pokemonSet, pokemonName) {
+  pokemonSet = pokemonSet.replace(/-/g, '+');
+  pokemonName = pokemonName.replace(/-/g, '+');
+  const searchUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(pokemonSet)}+${encodeURIComponent(pokemonName)}&_sop=16`; // sort by price descending
+  try {
+    const { data } = await axios.get(searchUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0", // mimic browser
+      },
+    });
+
+    const $ = cheerio.load(data);
+    const firstPrice = $(".s-item__price").first().text().trim();
+
+    console.log(`eBay Highest Price: ${firstPrice}`);
+  } catch (err) {
+    console.error("Error fetching from eBay:", err.message);
+  }
+}
+>>>>>>> Stashed changes
 
 exports.getPrice = getPrice;
 exports.getPriceChartingPrice = getPriceChartingPrice;
