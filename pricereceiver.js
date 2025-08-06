@@ -22,23 +22,33 @@ async function getPriceChartingPrice(pokemonSet, pokemonName) {
   const url = `https://www.pricecharting.com/game/${pokemonSet}/${pokemonName}`;
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto(url);
-  console.log("Navigated to PriceCharting URL: " + url);
 
-  // Wait for the price element to appear
-  await page.waitForSelector(ungradedSelector);
-  console.log("PriceCharting selector found: " + ungradedSelector);
+  try {
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    console.log("Navigated to PriceCharting URL: " + url);
 
-  // Extract the price
-  const price = await page.$eval(ungradedSelector, el => {
-    const priceText = el.textContent.trim();
-    // Remove the dollar sign and commas, then parse to float
-    return parseFloat(priceText.replace(/[$,]/g, ''));
-  });
+    // Check if the page exists
+    const pageExists = await page.$(ungradedSelector);
+    if (!pageExists) {
+      console.log("Page does not exist or selector not found.");
+      await browser.close();
+      return 0; // Return 0 if the page or selector does not exist
+    }
 
-  await browser.close();
-  console.log("PriceCharting Price: " + price);
-  return price;
+    // Extract the price
+    const price = await page.$eval(ungradedSelector, el => {
+      const priceText = el.textContent.trim();
+      return parseFloat(priceText.replace(/[$,]/g, '')); // Remove dollar sign and commas, then parse to float
+    });
+
+    await browser.close();
+    console.log("PriceCharting Price: " + price);
+    return isNaN(price) ? 0 : price; // Return 0 if the price is NaN
+  } catch (error) {
+    console.error("Error navigating to PriceCharting URL or extracting price:", error);
+    await browser.close();
+    return null; // Return null in case of an error
+  }
 }
 
 async function getEbayPrice(pokemonSet, pokemonName) {

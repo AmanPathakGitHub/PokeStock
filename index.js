@@ -2,7 +2,15 @@ const express = require('express');
 const priceReceiver = require('./pricereceiver.js');
 const fs = require('fs');
 const cors = require('cors'); // Import CORS middleware
+const { Pool } = require('pg');
 
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'pokecollection',
+    password: 'postgres',
+    port: 5432,
+});
 
 const app = express();
 const port = 3000;
@@ -52,6 +60,7 @@ app.get('/images', (req, res) => {
 
 app.get('/give/:SetName', (req, res) => {
     const name = req.params.SetName.replace(/-/g, ' ').toLowerCase();
+    console.log(`Fetching card details for set: ${name}`);
 
     // Check if the card details for the set are already cached
     if (imageCache[name]) {
@@ -93,6 +102,98 @@ app.get('/card/:CardId', (req, res) => {
         price: Math.random() * 100, // Random price for demonstration
     };
     res.json(cardDetails);
+});
+
+// Endpoint to add or update card data
+app.post('/updateCollection', async (req, res) => {
+    const {
+        userId,
+        setName,
+        cardName,
+        cardNumber,
+        basePrice,
+        reversePrice,
+        pokeBallPrice,
+        masterBallPrice,
+        baseQuantity,
+        reverseQuantity,
+        pokeBallQuantity,
+        masterBallQuantity,
+    } = req.body;
+
+    console.log(`\nUpdating collection for user ID: ${userId}, set: ${setName}, card: ${cardName}, number: ${cardNumber}`);
+
+    try {
+        const query = `
+            INSERT INTO card_collection (user_id, set_name, card_name, card_number, base_price, reverse_price, poke_ball_price, master_ball_price, base_quantity, reverse_quantity, poke_ball_quantity, master_ball_quantity)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            ON CONFLICT (user_id, set_name, card_name, card_number)
+            DO UPDATE SET
+                base_price = $5,
+                reverse_price = $6,
+                poke_ball_price = $7,
+                master_ball_price = $8,
+                base_quantity = $9,
+                reverse_quantity = $10,
+                poke_ball_quantity = $11,
+                master_ball_quantity = $12;
+        `;
+        const values = [
+            userId,
+            setName,
+            cardName,
+            cardNumber,
+            basePrice,
+            reversePrice,
+            pokeBallPrice,
+            masterBallPrice,
+            baseQuantity,
+            reverseQuantity,
+            pokeBallQuantity,
+            masterBallQuantity,
+        ];
+
+        await pool.query(query, values);
+        res.status(200).send('Collection updated successfully');
+    } catch (error) {
+        console.error('Error updating collection:', error);
+        res.status(500).send('Error updating collection');
+    }
+});
+
+app.get('/getCollection/:userId', async (req, res) => {
+    const { userId } = req.params;
+    console.log(`Fetching collection for user ID: ${userId}`);
+    try {
+        const query = 'SELECT * FROM card_collection WHERE user_id = $1';
+        const values = [userId];
+        const result = await pool.query(query, values);
+
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error fetching collection:', error);
+        res.status(500).send('Error fetching collection');
+    }
+});
+
+app.get('/getCard', async (req, res) => {
+    const { setName, cardId } = req.query;
+    console.log(`\nFetching card details for set: ${setName}, card ID: ${cardId}\n`);
+
+    try {
+        const query = `SELECT * FROM card_collection WHERE set_name = $1 AND card_number = $2`;
+        const values = [setName, cardId];
+        const result = await pool.query(query, values);
+
+        if (result.rows.length > 0) {
+            res.status(200).json(result.rows[0]);
+        } else {
+            res.status(404).send('Card not found');
+        }
+    } catch (error) {
+        console.error('Error fetching card details:', error);
+        res.status(500).send('Error fetching card details');
+    }
 });
 
 app.listen(port, async () => {
