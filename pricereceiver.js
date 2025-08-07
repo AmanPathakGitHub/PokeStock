@@ -20,7 +20,9 @@ async function getPriceChartingPrice(pokemonSet, pokemonName) {
   console.log("Fetching price for: " + pokemonSet + " " + pokemonName);
 
   const url = `https://www.pricecharting.com/game/${pokemonSet}/${pokemonName}`;
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
   const page = await browser.newPage();
 
   try {
@@ -60,7 +62,9 @@ async function getEbayPrice(pokemonSet, pokemonName) {
     const url = `https://www.ebay.com/sch/i.html?_nkw=${pokemonSet}+${pokemonName}&Grade=10&_sop=16`;
     console.log("Ebay URL: " + url);
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 0 });
 
@@ -82,7 +86,9 @@ async function PopulateSetURLS() {
     const url = "https://www.pokellector.com/sets";
     const setTableSelector = "#columnLeft";
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: ['networkidle0', 'load', 'domcontentloaded'], timeout: 0 });
     await page.waitForSelector(setTableSelector);
@@ -110,7 +116,9 @@ async function PopulateSetURLS() {
 
 async function getPokemonImages(url) {
     const cardTableSelector = "#columnLeft > div.content.cardlisting.small";
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
     const page = await browser.newPage();
     
     await page.goto(url, { waitUntil: ['networkidle0', 'load', 'domcontentloaded'], timeout: 0 });
