@@ -3,6 +3,7 @@ const priceReceiver = require('./pricereceiver.js');
 const fs = require('fs');
 const cors = require('cors'); // Import CORS middleware
 const { Pool } = require('pg');
+const path = require('path');
 
 const pool = new Pool({
     user: 'postgres',
@@ -23,10 +24,11 @@ const imageCache = {}; // In-memory cache for image links
 
 app.use(express.json());
 app.use(cors()); // Enable CORS for all routes
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files from the "public" directory
 
 app.get('/', (req, res) => {
     console.log("Server root accessed");
-    res.send("Welcome to the PokeStock API! Use /cardPrice?pokemonSet=<set>&pokemonName=<name> to get card prices.");
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 app.get('/cardPrice', (req, res) => {

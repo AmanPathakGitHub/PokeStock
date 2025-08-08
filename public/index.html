@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to PokeStock API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: rgb(0, 0, 0); color: #f2f8ffff;}
+        h1 { color: #f2f8ffff; }
+        p { line-height: 1.6; }
+        ul { margin-top: 10px; }
+        li { margin-bottom: 5px; }
+        .svg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .glassmorphic {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div class="svg-container">
+        <svg id="visual" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+            <path d="M0 61L12.5 76C25 91 50 121 75 120C100 119 125 87 150 69C175 51 200 47 225 55C250 63 275 83 300 88C325 93 350 83 375 91C400 99 425 125 450 121C475 117 500 83 525 63C550 43 575 37 600 42C625 47 650 63 675 83C700 103 725 127 750 121C775 115 800 79 825 65C850 51 875 59 887.5 63L900 67L900 0L887.5 0C875 0 850 0 825 0C800 0 775 0 750 0C725 0 700 0 675 0C650 0 625 0 600 0C575 0 550 0 525 0C500 0 475 0 450 0C425 0 400 0 375 0C350 0 325 0 300 0C275 0 250 0 225 0C200 0 175 0 150 0C125 0 100 0 75 0C50 0 25 0 12.5 0L0 0Z" fill="#2e00fd"></path>
+            <path d="M0 133L12.5 138C25 143 50 153 75 145C100 137 125 111 150 102C175 93 200 101 225 109C250 117 275 125 300 131C325 137 350 141 375 151C400 161 425 177 450 168C475 159 500 125 525 109C550 93 575 95 600 102C625 109 650 121 675 133C700 145 725 157 750 153C775 149 800 129 825 118C850 107 875 105 887.5 104L900 103L900 65L887.5 61C875 57 850 49 825 63C800 77 775 113 750 119C725 125 700 101 675 81C650 61 625 45 600 40C575 35 550 41 525 61C500 81 475 115 450 119C425 123 400 97 375 89C350 81 325 91 300 86C275 81 250 61 225 53C200 45 175 49 150 67C125 85 100 117 75 118C50 119 25 89 12.5 74L0 59Z" fill="#b600cc"></path>
+            <path d="M0 157L12.5 161C25 165 50 173 75 169C100 165 125 149 150 150C175 151 200 169 225 182C250 195 275 203 300 206C325 209 350 207 375 216C400 225 425 245 450 230C475 215 500 165 525 142C550 119 575 123 600 132C625 141 650 155 675 173C700 191 725 213 750 212C775 211 800 187 825 174C850 161 875 159 887.5 158L900 157L900 101L887.5 102C875 103 850 105 825 116C800 127 775 147 750 151C725 155 700 143 675 131C650 119 625 107 600 100C575 93 550 91 525 107C500 123 475 157 450 166C425 175 400 159 375 149C350 139 325 135 300 129C275 123 250 115 225 107C200 99 175 91 150 100C125 109 100 135 75 143C50 151 25 141 12.5 136L0 131Z" fill="#e4009f"></path>
+            <path d="M0 247L12.5 255C25 263 50 279 75 275C100 271 125 247 150 245C175 243 200 263 225 273C250 283 275 283 300 279C325 275 350 267 375 274C400 281 425 303 450 291C475 279 500 233 525 207C550 181 575 175 600 193C625 211 650 253 675 283C700 313 725 331 750 315C775 299 800 249 825 230C850 211 875 223 887.5 229L900 235L900 155L887.5 156C875 157 850 159 825 172C800 185 775 209 750 210C725 211 700 189 675 171C650 153 625 139 600 130C575 121 550 117 525 140C500 163 475 213 450 228C425 243 400 223 375 214C350 205 325 207 300 204C275 201 250 193 225 180C200 167 175 149 150 148C125 147 100 163 75 167C50 171 25 163 12.5 159L0 155Z" fill="#f5007d"></path>
+            <path d="M0 301L12.5 314C25 327 50 353 75 347C100 341 125 303 150 296C175 289 200 313 225 328C250 343 275 349 300 349C325 349 350 343 375 342C400 341 425 345 450 324C475 303 500 257 525 241C550 225 575 239 600 258C625 277 650 301 675 322C700 343 725 361 750 348C775 335 800 291 825 278C850 265 875 283 887.5 292L900 301L900 233L887.5 227C875 221 850 209 825 228C800 247 775 297 750 313C725 329 700 311 675 281C650 251 625 209 600 191C575 173 550 179 525 205C500 231 475 277 450 289C425 301 400 279 375 272C350 265 325 273 300 277C275 281 250 281 225 271C200 261 175 241 150 243C125 245 100 269 75 273C50 277 25 261 12.5 253L0 245Z" fill="#fc005c"></path>
+            <path d="M0 397L12.5 403C25 409 50 421 75 426C100 431 125 429 150 426C175 423 200 419 225 428C250 437 275 459 300 470C325 481 350 481 375 486C400 491 425 501 450 510C475 519 500 527 525 531C550 535 575 535 600 538C625 541 650 547 675 533C700 519 725 485 750 480C775 475 800 499 825 484C850 469 875 415 887.5 388L900 361L900 299L887.5 290C875 281 850 263 825 276C800 289 775 333 750 346C725 359 700 341 675 320C650 299 625 275 600 256C575 237 550 223 525 239C500 255 475 301 450 322C425 343 400 339 375 340C350 341 325 347 300 347C275 347 250 341 225 326C200 311 175 287 150 294C125 301 100 339 75 345C50 351 25 325 12.5 312L0 299Z" fill="#fc0037"></path>
+            <path d="M0 601L12.5 601C25 601 50 601 75 601C100 601 125 601 150 601C175 601 200 601 225 601C250 601 275 601 300 601C325 601 350 601 375 601C400 601 425 601 450 601C475 601 500 601 525 601C550 601 575 601 600 601C625 601 650 601 675 601C700 601 725 601 750 601C775 601 800 601 825 601C850 601 875 601 887.5 601L900 601L900 359L887.5 386C875 413 850 467 825 482C800 497 775 473 750 478C725 483 700 517 675 531C650 545 625 539 600 536C575 533 550 533 525 529C500 525 475 517 450 508C425 499 400 489 375 484C350 479 325 479 300 468C275 457 250 435 225 426C200 417 175 421 150 424C125 427 100 429 75 424C50 419 25 407 12.5 401L0 395Z" fill="#f40000"></path>
+        </svg>
+    </div>
+    <div class="glassmorphic">
+        <h1>Welcome to the PokeStock API!</h1>
+        <p>The PokeStock backend is a Node.js application that provides APIs for managing and fetching data related to Pokémon card collections.</p>
+        <h2>Features</h2>
+        <ul>
+            <li>Fetch Pokémon card prices from external sources (e.g., PriceCharting, eBay).</li>
+            <li>Manage user card collections in a PostgreSQL database.</li>
+            <li>Provide APIs for fetching and updating card data.</li>
+            <li>Cache images and set URLs for efficient data retrieval.</li>
+        </ul>
+        <h2>API Endpoints</h2>
+        <ul>
+            <li><strong>GET /</strong>: Returns this welcome message and basic usage instructions.</li>
+            <li><strong>GET /cardPrice</strong>: Fetches the price of a specific Pokémon card.</li>
+            <li><strong>GET /images</strong>: Returns cached set URLs and images.</li>
+            <li><strong>GET /give/:SetName</strong>: Fetches card details for a specific set.</li>
+            <li><strong>GET /seturls</strong>: Populates and returns set URLs.</li>
+            <li><strong>GET /card/:CardId</strong>: Fetches details for a specific card.</li>
+            <li><strong>POST /updateCollection</strong>: Adds or updates card data in the user's collection.</li>
+            <li><strong>GET /getCollection/:userId</strong>: Fetches the card collection for a specific user.</li>
+            <li><strong>GET /getCard</strong>: Fetches details for a specific card in a set.</li>
+        </ul>
+        <p>For more details, check the project documentation.</p>
+    </div>
+    <script>
+        // Fade in each wave path on load
+        gsap.from("#visual path", {
+          opacity: 0,
+          y: 50,
+          duration: 1.2,
+          stagger: 0.2,
+          ease: "power2.out"
+        });
+
+        // Add gentle floating effect to each wave
+        gsap.to("#visual path", {
+          y: 10,
+          repeat: -1,
+          yoyo: true,
+          duration: 3,
+          ease: "sine.inOut",
+          stagger: {
+            each: 0.15,
+            from: "center"
+          }
+        });
+    </script>
+</body>
+</html>
